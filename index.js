@@ -14,11 +14,12 @@ app.use(cors({
 }))
 
 app.use("/api/article", Article)
-app.use("/api/users", UserRoutes)
+app.use("/api/users", UserRoutes)   
 
 function Server() {
     mongoose.connect(process.env.MONGO_URI,)
         .then((res) => console.log("Mongo DB was connected"))
+        .catch((err) => console.log("Mongo DB can't connect, because " + err))
     app.listen(2000, () => {
         console.log("Server are running on port 2000");
     })
