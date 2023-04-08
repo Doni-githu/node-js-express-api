@@ -26,7 +26,7 @@ router.post('/', async (req, res) => {
 
     const user = await User.create(newUser)
     const token = makeJsonWebToken(user._id)
-    res.status(200).json({ user: user, token })
+    res.status(200).json({ ...user, token })
 })
 
 router.post("/login", async (req, res) => {
