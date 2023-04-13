@@ -1,10 +1,12 @@
 import { Schema, model } from "mongoose";
 
-const ArticleSchema = new Schema({
+const PostSchema = new Schema({
     title: { type: String, required: true },
     body: { type: String, required: true },
+    src: { type: Schema.Types.String, required: true },
+    comments: { type: Array },
     user: { type: Schema.Types.ObjectId, ref: 'User' }
-})
+}, {timestamps: true})
 
-const Article = model("User", ArticleSchema)
-export default Article
+const Post = model("Post", PostSchema)
+export default Post

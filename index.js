@@ -5,16 +5,22 @@ import mongoose from "mongoose";
 import cors from "cors"
 import UserRoutes from "./routes/user.js"
 import Article from "./routes/article.js";
+
 const app = express()
 
 
 app.use(express.json())
 app.use(cors({
-    origin: '*'
+    origin: '*',
+    allowedHeaders: '*',
+    exposedHeaders: '*',
+
 }))
 
+
+
 app.use("/api/article", Article)
-app.use("/api/users", UserRoutes)   
+app.use("/api/users", UserRoutes)
 
 function Server() {
     mongoose.connect(process.env.MONGO_URI,)
