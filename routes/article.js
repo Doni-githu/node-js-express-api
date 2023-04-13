@@ -2,8 +2,7 @@ import { Router } from "express";
 import Post from "../modules/article.js";
 import multer from "multer";
 import { fileURLToPath } from "url"
-import path, { dirname } from "path";
-import fs from "fs"
+import { dirname } from "path";
 import { getJsonWebToken } from "../jwt/token.js";
 const router = Router()
 
@@ -13,7 +12,7 @@ const __dirname = dirname(__filename)
 
 router.get('/', async (req, res) => {
     const articles = await Post.find().lean()
-    res.status(200).json(articles)
+    res.status(200).json(articles.reverse())
 })
 
 const storage = multer.diskStorage({
@@ -21,57 +20,37 @@ const storage = multer.diskStorage({
         callback(null, __dirname + '/uploads')
     },
     filename: function (req, file, callback) {
-        callback(null, `image-${Date.now()}-${file.originalname}`)
-    }
+        callback(null, file.originalname)
+    },
 })
 
 
-const upload = multer({ storage })
-
-
-// const convert = (file) => {
-//     return new Promise((resolve, reject) => {
-//         const fr = new FileReader()
-
-//         fr.readAsDataURL(file)
-
-//         fr.onload = () => {
-//             resolve(fr.result)
-//         }
-
-//         fr.onerror = (error) => {
-//             reject(error)
-//         }
-//     })
-// }
+const upload = multer({ storage: storage })
 
 router.post('/add', upload.single('image'), async (req, res) => {
     const user = getJsonWebToken(req.headers.authorization).payload.userId
-
-
-
-    // const post = {
-    //     title: title,
-    //     body: body,
-    //     src: filepath,
-    //     user: user,
-    // }
-
-    // fs.readFile(req.file.path, (err, data) => {
-    //     if (err) {
-    //         return new Error(err)
-    //     }
-
-    //     res.send({ img: data.toString('base64')})
-    // })
-
-    res.send(req.file.path)
-
-
-    // await Post.create(post)
-    // res.status(200).json({ message: 'Success' })
+    const file = req.file.filename
+    const { title, body } = req.body
+    const post = {
+        title: title,
+        body: body,
+        user: user,
+        src: `http://localhost:2000/routes/uploads/${file}`
+    }
+    await Post.create(post)
+    res.status(200).json({ message: "Success" })
 })
 
+router.get('/:id', async (req, res) => {
+    const id = req.params.id
+    const product = await Post.findById(id)
+    res.status(200).json({ product })
+})
 
+router.delete('/:id', async (req, res) => {
+    const id = req.params.id
+    await Post.findByIdAndRemove(id, { new: true })
+    res.status(202).json({ message: 'Successfuly deleted your post' })
+})
 
 export default router
