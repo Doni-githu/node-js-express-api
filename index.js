@@ -14,20 +14,21 @@ app.use(cors({
     origin: '*',
     allowedHeaders: '*',
     exposedHeaders: '*',
-
 }))
 
 
 
+app.use('/routes/uploads', express.static('./routes/uploads'))
 app.use("/api/article", Article)
 app.use("/api/users", UserRoutes)
 
 function Server() {
+    const PORT = process.env.PORT ?? 2000
     mongoose.connect(process.env.MONGO_URI,)
         .then((res) => console.log("Mongo DB was connected"))
         .catch((err) => console.log("Mongo DB can't connect, because " + err))
-    app.listen(2000, () => {
-        console.log("Server are running on port 2000");
+    app.listen(PORT, () => {
+        console.log("Server are running on port " + PORT);
     })
 }
 Server()
