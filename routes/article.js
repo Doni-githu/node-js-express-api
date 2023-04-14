@@ -2,9 +2,10 @@ import { Router } from "express";
 import Post from "../modules/article.js";
 import multer from "multer";
 import { fileURLToPath } from "url"
-import { dirname } from "path";
+import path, { dirname } from "path";
 import User from "../modules/auth.js"
 import { getJsonWebToken } from "../jwt/token.js";
+import { unlink } from "fs";
 const router = Router()
 
 
@@ -50,6 +51,9 @@ router.get('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     const id = req.params.id
+    const whatDelete = await Post.findById(id)
+    console.log(whatDelete.src);
+    unlink(path.join(__dirname, 'uploads', ))
     await Post.findByIdAndRemove(id, { new: true })
     res.status(202).json({ message: 'Successfuly deleted your post' })
 })
