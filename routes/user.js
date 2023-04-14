@@ -6,7 +6,7 @@ import { getJsonWebToken, makeJsonWebToken } from "../jwt/token.js"
 const router = Router()
 
 router.post('/', async (req, res) => {
-    const { name, email, password } = req.body.user
+    const { username, email, password } = req.body.user
 
     const candidate = await User.findOne({ email })
 
@@ -15,11 +15,18 @@ router.post('/', async (req, res) => {
         return
     }
 
+    const candidateByName = await User.findOne({ username })
+
+    if (candidateByName) {
+        res.status(400).json({ message: "Username taken" })
+        return
+    }
+
     const hashPassword = await bcrypt.hash(password, 10)
 
 
     const newUser = {
-        username: name,
+        username: username,
         email: email,
         password: hashPassword
     }

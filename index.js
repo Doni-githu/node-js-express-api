@@ -24,7 +24,7 @@ app.use("/api/users", UserRoutes)
 
 function Server() {
     const PORT = process.env.PORT ?? 2000
-    mongoose.connect(process.env.MONGO_URI,)
+    mongoose.connect(process.env.MONGO_URI)
         .then((res) => console.log("Mongo DB was connected"))
         .catch((err) => console.log("Mongo DB can't connect, because " + err))
     app.listen(PORT, () => {
