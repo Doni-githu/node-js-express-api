@@ -6,6 +6,7 @@ import path, { dirname } from "path";
 import User from "../modules/auth.js"
 import { getJsonWebToken } from "../jwt/token.js";
 import { unlink } from "fs";
+import { v4 } from "uuid"
 const router = Router()
 
 
@@ -22,7 +23,7 @@ const storage = multer.diskStorage({
         callback(null, __dirname + '/uploads')
     },
     filename: function (req, file, callback) {
-        callback(null, file.originalname)
+        callback(null, `image-${v4()}-${file.originalname}`)
     },
 })
 
@@ -51,9 +52,13 @@ router.get('/:id', async (req, res) => {
 
 router.delete('/:id', async (req, res) => {
     const id = req.params.id
-    const whatDelete = await Post.findById(id)
-    console.log(whatDelete.src);
-    unlink(path.join(__dirname, 'uploads', ))
+    const oldProduct = await Post.findById(id)
+    const filename = oldProduct.src.replace('http://localhost:2000/routes/uploads/', '')
+    unlink(path.join(__dirname, 'uploads', filename), (err) => {
+        if (err) {
+            throw new Error(err)
+        }
+    })
     await Post.findByIdAndRemove(id, { new: true })
     res.status(202).json({ message: 'Successfuly deleted your post' })
 })
@@ -72,9 +77,28 @@ router.put('/comment', async (req, res) => {
     res.status(200).json(updated)
 })
 
+router.get('/edit/:id', async (req, res) => {
+    const product = await Post.findById(req.params.id)
+    res.status(200).json({ product })
+})
+
 router.put('/edit/:id', upload.single('image'), async (req, res) => {
-    console.log(req.body);
-    console.log(req.files);
+    const existProduct = await Post.findById(req.params.id)
+    const filename = existProduct.src.replace('http://localhost:2000/routes/uploads/', '')
+    unlink(path.join(__dirname, 'uploads', filename), (err) => {
+        if (err) {
+            return new Error(err)
+        }
+    })
+    const newPost = {
+        title: req.body.title,
+        body: req.body.body,
+        src: `http://localhost:2000/routes/uploads/${req.file.filename}`,
+        comments: existProduct.comments,
+        user: existProduct.user,
+    }
+    await Post.findByIdAndUpdate(req.params.id, newPost, { new: true })
+    res.status(201).json({ message: 'Successfuly updated' })
 })
 
 export default router
