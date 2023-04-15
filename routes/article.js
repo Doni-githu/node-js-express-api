@@ -38,7 +38,7 @@ router.post('/add', upload.single('image'), async (req, res) => {
         title: title,
         body: body,
         user: user,
-        src: `https://url-backend-nodejs-express.onrender.com/routes/uploads/${file}`
+        src: `https://node-js-express-api.onrender.com/routes/uploads/${file}`
     }
     await Post.create(post)
     res.status(200).json({ message: "Success" })
@@ -53,7 +53,7 @@ router.get('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
     const id = req.params.id
     const oldProduct = await Post.findById(id)
-    const filename = oldProduct.src.replace('https://url-backend-nodejs-express.onrender.com/routes/uploads/', '')
+    const filename = oldProduct.src.replace('https://node-js-express-api.onrender.com/routes/uploads/', '')
     unlink(path.join(__dirname, 'uploads', filename), (err) => {
         if (err) {
             throw new Error(err)
@@ -84,7 +84,7 @@ router.get('/edit/:id', async (req, res) => {
 
 router.put('/edit/:id', upload.single('image'), async (req, res) => {
     const existProduct = await Post.findById(req.params.id)
-    const filename = existProduct.src.replace('https://url-backend-nodejs-express.onrender.com/routes/uploads/', '')
+    const filename = existProduct.src.replace('https://node-js-express-api.onrender.com/routes/uploads/', '')
     unlink(path.join(__dirname, 'uploads', filename), (err) => {
         if (err) {
             return new Error(err)
@@ -93,7 +93,7 @@ router.put('/edit/:id', upload.single('image'), async (req, res) => {
     const newPost = {
         title: req.body.title,
         body: req.body.body,
-        src: `https://url-backend-nodejs-express.onrender.com/routes/uploads/${req.file.filename}`,
+        src: `https://node-js-express-api.onrender.com/routes/uploads/${req.file.filename}`,
         comments: existProduct.comments,
         user: existProduct.user,
     }

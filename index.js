@@ -12,11 +12,14 @@ const app = express()
 app.use(express.json())
 app.use(cors({
     origin: '*',
+    allowedHeaders: '*',
+    exposedHeaders: '*',
+    credentials: 'true'
 }))
 
 
 
-app.use('/routes/uploads', express.static('./routes/uploads'))
+app.use(express.static('./routes/uploads'))
 app.use("/api/article", Article)
 app.use("/api/users", UserRoutes)
 
