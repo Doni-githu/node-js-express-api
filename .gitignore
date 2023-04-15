@@ -1,4 +1,8 @@
 node_modules/*
 .idea/*
 package-lock.json
-# !/routes/uploads/.gitkeep
+
+
+!/routes/uploads/.gitkeep
+
+!/uploads/
