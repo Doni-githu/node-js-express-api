@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
 
 const storage = multer.diskStorage({
     destination: function (req, file, callback) {
-        callback(null, __dirname + '/uploads')
+        callback(null, '/uploads')
     },
     filename: function (req, file, callback) {
         callback(null, `image-${v4()}-${file.originalname}`)
