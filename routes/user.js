@@ -7,30 +7,24 @@ const router = Router()
 
 router.post('/', async (req, res) => {
     const { username, email, password } = req.body.user
-
     const candidate = await User.findOne({ email })
 
     if (candidate) {
         res.status(400).json({ message: "Email taken" })
         return
     }
-
     const candidateByName = await User.findOne({ username })
-
     if (candidateByName) {
         res.status(400).json({ message: "Username taken" })
         return
     }
 
     const hashPassword = await bcrypt.hash(password, 10)
-
-
     const newUser = {
         username: username,
         email: email,
         password: hashPassword
     }
-
     const user = await User.create(newUser)
     const token = makeJsonWebToken(user._id)
     res.status(200).send({ user: user, token })
